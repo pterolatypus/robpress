@@ -9,9 +9,9 @@
 
 		/** Attempt to resume a previously logged in session if one exists */
 		public function resume() {
-			$f3=Base::instance();				
+			$f3=Base::instance();
 
-			//Ignore if already running session	
+			//Ignore if already running session
 			if($f3->exists('SESSION.user.id')) return;
 
 			//Log user back in from cookie
@@ -19,7 +19,7 @@
 				$user = unserialize(base64_decode($f3->get('COOKIE.RobPress_User')));
 				$this->forceLogin($user);
 			}
-		}		
+		}
 
 		/** Perform any checks before starting login */
 		public function checkLogin($username,$password,$request,$debug) {
@@ -27,25 +27,34 @@
 			//DO NOT check login when in debug mode
 			if($debug == 1) { return true; }
 
-			return true;	
+			return true;
 		}
 
 		/** Look up user by username and password and log them in */
 		public function login($username,$password) {
-			$f3=Base::instance();						
+			$f3=Base::instance();
 			$db = $this->controller->db;
-			$results = $db->query("SELECT * FROM `users` WHERE `username`='$username' AND `password`='$password'");
-			if (!empty($results)) {		
-				$user = $results[0];	
+
+
+			//$results = $db->query("SELECT * FROM `users` WHERE `username`='$username' AND `password`='$password'");
+			//FIXED - login now uses prepared statements to avoid SQL injection
+			$stmt = $db->prepare("SELECT * FROM `users` WHERE `username`=? AND `password`=?");
+			$stmt->bindValue(1, $username);
+			$stmt->bindValue(2, $password);
+			$stmt->execute();
+			$results = $stmt->fetchAll();
+
+			if (!empty($results)) {
+				$user = $results[0];
 				$this->setupSession($user);
 				return $this->forceLogin($user);
-			} 
+			}
 			return false;
 		}
 
 		/** Log user out of system */
 		public function logout() {
-			$f3=Base::instance();							
+			$f3=Base::instance();
 
 			//Kill the session
 			session_destroy();
@@ -61,9 +70,15 @@
 			session_destroy();
 
 			//Setup new session
-			session_id(md5($user['id']));
+			//This will be the same every time so is useless as a session
+			//Also, ewwww MD5?
+			//session_id(md5($user['id']));
+			//Jus use the built-in version :S
+			session_start();
 
 			//Setup cookie for storing user details and for relogging in
+			//Bad bad bad, don't send serialized objects
+			//TODO: Implement proper tokens for this sort of thing
 			setcookie('RobPress_User',base64_encode(serialize($user)),time()+3600*24*30,'/');
 
 			//And begin!
@@ -106,13 +121,13 @@
 			}
 
 			//Log in as new user
-			return $this->forceLogin($user);			
+			return $this->forceLogin($user);
 		}
 
 		/** Force a user to log in and set up their details */
 		public function forceLogin($user) {
 			//YOU ARE NOT ALLOWED TO CHANGE THIS FUNCTION
-			$f3=Base::instance();					
+			$f3=Base::instance();
 
 			if(is_object($user)) { $user = $user->cast(); }
 

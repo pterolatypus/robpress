@@ -15,13 +15,12 @@ class User extends Controller {
 
 	public function add($f3) {
 		if($this->request->is('post')) {
+
 			extract($this->request->data);
-			$check = $this->Model->Users->fetch(array('username' => $username));
-			if (!empty($check)) {
-				StatusMessage::add('User already exists','danger');
-			} else if($password != $password2) {
-				StatusMessage::add('Passwords must match','danger');
-			} else {
+
+			//if ($this->Registration->check($username,$displayname,$email,$password,$password2) || true) {
+
+
 				$user = $this->Model->Users;
 				$user->copyfrom('POST');
 				$user->created = mydate();
@@ -34,11 +33,11 @@ class User extends Controller {
 
 				//Set the users password
 				$user->setPassword($user->password);
+				$user->save();
 
-				$user->save();	
 				StatusMessage::add('Registration complete','success');
 				return $f3->reroute('/user/login');
-			}
+			//}
 		}
 	}
 
@@ -61,7 +60,7 @@ class User extends Controller {
 			} else {
 				StatusMessage::add('Invalid username or password','danger');
 			}
-		}		
+		}
 	}
 
 	/* Handle after logging in */
@@ -72,18 +71,18 @@ class User extends Controller {
 				if(isset($_GET['from'])) {
 					$f3->reroute($_GET['from']);
 				} else {
-					$f3->reroute('/');	
+					$f3->reroute('/');
 				}
 	}
 
 	public function logout($f3) {
 		$this->Auth->logout();
 		StatusMessage::add('Logged out succesfully','success');
-		$f3->reroute('/');	
+		$f3->reroute('/');
 	}
 
 
-	public function profile($f3) {	
+	public function profile($f3) {
 		$id = $this->Auth->user('id');
 		extract($this->request->data);
 		$u = $this->Model->Users->fetch($id);
@@ -103,7 +102,7 @@ class User extends Controller {
 			$u->save();
 			\StatusMessage::add('Profile updated succesfully','success');
 			return $f3->reroute('/user/profile');
-		}			
+		}
 		$_POST = $u->cast();
 		$f3->set('u',$u);
 	}

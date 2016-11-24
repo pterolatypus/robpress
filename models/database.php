@@ -1,10 +1,10 @@
 <?php
 
 class Database {
-	
+
 	public static $singleton;
 	public $connection;
-	
+
 	/** Return the single database connection */
 	public static function getConnection() {
 		if(empty(self::$singleton)) {
@@ -17,7 +17,7 @@ class Database {
 					);
 		}
 		return self::$singleton;
-	}	
+	}
 
 	/** Create a new database object */
 	public function __construct() {
@@ -27,6 +27,11 @@ class Database {
 	/** Perform a direct database query */
 	public function query($sql) {
 		$result = $this->connection->exec($sql);
+		return $result;
+	}
+
+	public function prepare($sql) {
+		$result = $this->connection->prepare($sql);
 		return $result;
 	}
 
