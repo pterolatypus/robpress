@@ -63,6 +63,8 @@ class User extends Controller {
 				StatusMessage::add('Invalid username or password','danger');
 			}
 		}
+		//Had to add this line for sanitising reflected form input
+		$f3->set('inputHelper', $this->Input);
 	}
 
 	/* Handle after logging in */
