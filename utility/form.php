@@ -2,17 +2,18 @@
 
 class Form {
 
-	public function __construct() {
+	public function __construct($inputHelper) {
+		$this->Input = $inputHelper;
 	}
 
 	public function start($options=array()) {
 		$action = isset($options['action']) ? $options['action'] : '';
 		$enctype = (isset($options['type']) && $options['type'] == 'file') ? 'enctype="multipart/form-data"' : ''; //Handle file uploads
-		return '<form role="form" method="post" action="'.$action.'" '.$enctype.'>';	
+		return '<form role="form" method="post" action="'.$action.'" '.$enctype.'>';
 	}
 
 	public function file($options) {
-		return '<input type="file" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $options['value'] . '">';
+		return '<input type="file" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $this->sanitise($options['value'], array('html')) . '">';
 	}
 
 	public function checkbox($options) {
@@ -27,10 +28,10 @@ class Form {
 	}
 
 	public function select($options) {
-		$output = '<select class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">'; 
+		$output = '<select class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">';
 		foreach($options['items'] as $value=>$label) {
 			$checked = ($options['value'] == $value) ? 'selected="selected"' : '';
-			$output .= '<option value="'.$value.'" '.$checked.'>'.$label.'</option>';
+			$output .= '<option value="'. $this->sanitise($options['value'], array('html')) .'" '.$checked.'>'.$label.'</option>';
 		}
 		$output .= '</select>';
 		return $output;
@@ -38,13 +39,13 @@ class Form {
 
 
 	public function checkboxes($options) {
-		$output = '';	
+		$output = '';
 		foreach($options['items'] as $value=>$label) {
 			$checked = (is_array($options['value']) && in_array($value,$options['value'])) ? 'checked="checked"' : '';
 			$output .= '
 				<div class="checkbox">
 				<label>
-				<input type="checkbox" name="'.$options['field'].'[]" '.$checked.' value="'.$value.'">'.$label.'
+				<input type="checkbox" name="'.$options['field'].'[]" '.$checked.' value="'. $this->Input->sanitise($options['value'], array('html')) .'">'.$label.'
 				</label>
 				</div>';
 		}
@@ -52,25 +53,25 @@ class Form {
 	}
 
 	public function hidden($options) {
-		return '<input type="hidden" id="' . $options['field'] . '" name="' . $options['field'] . '" value="' . $options['value'] . '">';
+		return '<input type="hidden" id="' . $options['field'] . '" name="' . $options['field'] . '" value="' . $this->Input->sanitise($options['value'], array('html')) . '">';
 	}
 
 	public function text($options) {
-		return '<input type="text" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $options['value'] . '">';
+		return '<input type="text" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $this->Input->sanitise($options['value'], array('html')) . '">';
 	}
 
 	public function datetime($options) {
-		return '<input type="text" class="datetime form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $options['value'] . '">';
+		return '<input type="text" class="datetime form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $this->Input->sanitise($options['value'], array('html')) . '">';
 	}
 
 	public function textarea($options) {
-		return '<textarea style="height: 200px" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">' . $options['value'] . '</textarea>';
+		return '<textarea style="height: 200px" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">' . $this->Input->sanitise($options['value'], array('html')) . '</textarea>';
 	}
 
 	public function wysiwyg($options) {
 		$f3 = Base::instance();
 		$base = $f3->get('site.base');
-		return '<textarea style="height: 200px" class="wysiwyg form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">' . $options['value'] . '</textarea>
+		return '<textarea style="height: 200px" class="wysiwyg form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">' . $this->Input->sanitise($options['value'], array('html')) . '</textarea>
 		<script type="text/javascript">CKEDITOR.replace(\'' . $options['field'] . "', {
 toolbarGroups: [
  		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
@@ -89,12 +90,12 @@ toolbarGroups: [
 
 
 	public function password($options) {
-		return '<input type="password" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $options['value'] . '">';
+		return '<input type="password" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $this->Input->sanitise($options['value'], array('html')) . '">';
 	}
 
 	public function submit($options) {
 		if(!isset($options['class'])) { $options['class'] = 'btn-primary'; }
-		return '<input type="submit" class="btn '.$options['class'].'" id="' . $options['field'] . '" name="' . $options['field'] . '" value="' . $options['label'] . '">';
+		return '<input type="submit" class="btn '.$options['class'].'" id="' . $options['field'] . '" name="' . $options['field'] . '" value="' . $this->Input->sanitise($options['value'], array('html')) . '">';
 	}
 
 	public function end() {
@@ -105,7 +106,7 @@ toolbarGroups: [
 		$options['label'] = $label = isset($options['label']) ? $options['label'] : ucfirst($field);
 		$type = isset($options['type']) ? $options['type'] : 'text';
 		if(isset($options['value'])) { $options['value'] = $options['value']; }
-		else if(isset($_POST[$field])) { $options['value'] = $_POST[$field]; }
+		elseif(isset($_POST[$field])) { $options['value'] = $_POST[$field]; }
 		elseif(!isset($options['value']) && isset($options['default'])) { $options['value'] = $options['default']; }
 		else { $options['value'] = ''; }
 
@@ -120,11 +121,11 @@ toolbarGroups: [
 		$result = <<<EOT
 <div class="form-group">
 <label for="$field">$label</label>
-$input 
-</div>	
+$input
+</div>
 EOT;
 		return $result;
-	}	
+	}
 
 }
 

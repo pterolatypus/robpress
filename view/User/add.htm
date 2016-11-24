@@ -4,7 +4,7 @@
 <p>Please provide a username, password and email address to register</p>
 
 <?
-	$form = new Form(); 
+	$form = new Form($inputHelper);
 	echo $form->start();
 	echo $form->add('username');
 	echo $form->add('displayname',array('label' => 'Display Name'));
@@ -13,7 +13,7 @@
 	echo $form->add('password',array('type' => 'password','value' => ''));
 	echo $form->add('password2',array('type' => 'password','value' => '', 'label' => 'Confirm Password'));
 	echo '<hr/>';
-	echo $form->add('Register',array('type' => 'submit'));
+	echo $form->add('Register',array('type' => 'submit', 'value' => 'Register'));
 	echo $form->end();
 ?>
 

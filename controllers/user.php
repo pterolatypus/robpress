@@ -39,6 +39,8 @@ class User extends Controller {
 				return $f3->reroute('/user/login');
 			}
 		}
+
+		$f3 -> set('inputHelper', $this->Input);
 	}
 
 	public function login($f3) {

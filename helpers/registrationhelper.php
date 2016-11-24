@@ -36,12 +36,15 @@
 				StatusMessage::add('Passwords must match','danger');
 				$allowed = false;
 			}
-      
-			$check = $this->controller->Model->Users->fetch(array('username' => $username));
-			if(!empty($check)) {
-				StatusMessage::add('Sorry, that username is already taken','danger');
-				$allowed = false;
-			}
+
+      //Don't bother with costly database lookups unless we know we have to
+      if($allowed) {
+        $check = $this->controller->Model->Users->fetch(array('username' => $username));
+			  if(!empty($check)) {
+				  StatusMessage::add('Sorry, that username is already taken','danger');
+				  $allowed = false;
+			  }
+      }
 
       return $allowed;
     }
