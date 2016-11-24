@@ -31,8 +31,8 @@ class Database {
 	}
 
 	public function prepare($sql) {
-		$result = $this->connection->prepare($sql);
-		return $result;
+		$statement = $this->connection->prepare($sql);
+		return $statement;
 	}
 
 }

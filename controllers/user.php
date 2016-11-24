@@ -18,7 +18,7 @@ class User extends Controller {
 
 			extract($this->request->data);
 
-			//if ($this->Registration->check($username,$displayname,$email,$password,$password2) || true) {
+			if ($this->Registration->check($username,$displayname,$email,$password,$password2)) {
 
 
 				$user = $this->Model->Users;
@@ -37,7 +37,7 @@ class User extends Controller {
 
 				StatusMessage::add('Registration complete','success');
 				return $f3->reroute('/user/login');
-			//}
+			}
 		}
 	}
 
