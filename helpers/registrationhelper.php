@@ -27,12 +27,6 @@
         $allowed = false;
       }
 
-			$check = $this->controller->Model->Users->fetch(array('username' => $username));
-			if(!empty($check)) {
-				StatusMessage::add('Sorry, that username is already taken','danger');
-				$allowed = false;
-			}
-
       if(!preg_match('/^[A-Za-z._%!$&*+-]{6,62}$/', $password)) {
         StatusMessage::add('Passwords must be between 6 and 63 characters and may only contain letters (a-z, A-Z), digits (0-9) and certain special characters (._%+-!$&*)', 'danger');
         $allowed = false;
@@ -40,6 +34,12 @@
 
 			if($password != $password2) {
 				StatusMessage::add('Passwords must match','danger');
+				$allowed = false;
+			}
+      
+			$check = $this->controller->Model->Users->fetch(array('username' => $username));
+			if(!empty($check)) {
+				StatusMessage::add('Sorry, that username is already taken','danger');
 				$allowed = false;
 			}
 
