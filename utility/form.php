@@ -1,8 +1,8 @@
 <?php
-include 'input.php';
 class Form {
 
-	public function __construct() {
+	public function __construct($xssHelper) {
+		$this->XSS = $xssHelper;
 	}
 
 	public function start($options=array()) {
@@ -12,7 +12,7 @@ class Form {
 	}
 
 	public function file($options) {
-		return '<input type="file" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . sanitise($options['value'], array('html')) . '">';
+		return '<input type="file" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $this->XSS->sanitise($options['value'], array('html')) . '">';
 	}
 
 	public function checkbox($options) {
@@ -30,7 +30,7 @@ class Form {
 		$output = '<select class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">';
 		foreach($options['items'] as $value=>$label) {
 			$checked = ($options['value'] == $value) ? 'selected="selected"' : '';
-			$output .= '<option value="'. $this->sanitise($options['value'], array('html')) .'" '.$checked.'>'.$label.'</option>';
+			$output .= '<option value="'.$this->XSS->sanitise($options['value'], array('html')) .'" '.$checked.'>'.$label.'</option>';
 		}
 		$output .= '</select>';
 		return $output;
@@ -44,7 +44,7 @@ class Form {
 			$output .= '
 				<div class="checkbox">
 				<label>
-				<input type="checkbox" name="'.$options['field'].'[]" '.$checked.' value="'. sanitise($options['value'], array('html')) .'">'.$label.'
+				<input type="checkbox" name="'.$options['field'].'[]" '.$checked.' value="'. $this->XSS->sanitise($value, array('html')) .'">'.$label.'
 				</label>
 				</div>';
 		}
@@ -52,32 +52,32 @@ class Form {
 	}
 
 	public function hidden($options) {
-		return '<input type="hidden" id="' . $options['field'] . '" name="' . $options['field'] . '" value="' . sanitise($options['value'], array('html')) . '">';
+		return '<input type="hidden" id="' . $options['field'] . '" name="' . $options['field'] . '" value="' . $this->XSS->sanitise($options['value'], array('html')) . '">';
 	}
 
 	public function text($options) {
-		return '<input type="text" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . sanitise($options['value'], array('html')) . '">';
+		return '<input type="text" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $this->XSS->sanitise($options['value'], array('html')) . '">';
 	}
 
 	public function datetime($options) {
-		return '<input type="text" class="datetime form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . sanitise($options['value'], array('html')) . '">';
+		return '<input type="text" class="datetime form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $this->XSS->sanitise($options['value'], array('html')) . '">';
 	}
 
 	public function textarea($options) {
-		return '<textarea style="height: 200px" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">' . sanitise($options['value'], array('html')) . '</textarea>';
+		return '<textarea style="height: 200px" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">' . $this->XSS->sanitise($options['value'], array('html')) . '</textarea>';
 	}
 
 	public function wysiwyg($options) {
 		$f3 = Base::instance();
 		$base = $f3->get('site.base');
-		return '<textarea style="height: 200px" class="wysiwyg form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">' . sanitise($options['value'], array('html')) . '</textarea>
+		return '<textarea style="height: 200px" class="wysiwyg form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">' . $this->XSS->sanitise($options['value'], array('html')) . '</textarea>
 		<script type="text/javascript">CKEDITOR.replace(\'' . $options['field'] . "', {
 toolbarGroups: [
- 		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
 		{ name: 'paragraph', groups: [ 'list', 'indent', 'blocks', 'align', 'bidi' ] },
 		{ name: 'colors' },
- 		{ name: 'links' },
- 		{ name: 'insert' },
+		{ name: 'links' },
+		{ name: 'insert' },
 	],
 	filebrowserUploadUrl: '$base/lib/upload.php'
 }
@@ -89,12 +89,12 @@ toolbarGroups: [
 
 
 	public function password($options) {
-		return '<input type="password" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . sanitise($options['value'], array('html')) . '">';
+		return '<input type="password" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $this->XSS->sanitise($options['value'], array('html')) . '">';
 	}
 
 	public function submit($options) {
 		if(!isset($options['class'])) { $options['class'] = 'btn-primary'; }
-		return '<input type="submit" class="btn '.$options['class'].'" id="' . $options['field'] . '" name="' . $options['field'] . '" value="' . sanitise($options['value'], array('html')) . '">';
+		return '<input type="submit" class="btn '.$options['class'].'" id="' . $options['field'] . '" name="' . $options['field'] . '" value="' . $this->XSS->sanitise($options['label'], array('html')) . '">';
 	}
 
 	public function end() {
@@ -104,10 +104,15 @@ toolbarGroups: [
 	public function add($field,$options=array()) {
 		$options['label'] = $label = isset($options['label']) ? $options['label'] : ucfirst($field);
 		$type = isset($options['type']) ? $options['type'] : 'text';
-		if(isset($options['value'])) { $options['value'] = $options['value']; }
-		elseif(isset($_POST[$field])) { $options['value'] = $_POST[$field]; }
-		elseif(!isset($options['value']) && isset($options['default'])) { $options['value'] = $options['default']; }
-		else { $options['value'] = ''; }
+		if(isset($options['value'])) {
+			$options['value'] = $options['value'];
+		}	elseif(isset($_POST[$field])) {
+			$options['value'] = $_POST[$field];
+		}	elseif(!isset($options['value']) && isset($options['default'])) {
+			$options['value'] = $options['default'];
+		}	else {
+			$options['value'] = '';
+		}
 
 		$options['field'] = $field;
 		if(!isset($options['placeholder'])) { $options['placeholder'] = ''; }

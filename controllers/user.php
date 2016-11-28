@@ -14,6 +14,7 @@ class User extends Controller {
 	}
 
 	public function add($f3) {
+		$f3->set('formhelper',$this->Form);
 		if($this->request->is('post')) {
 
 			extract($this->request->data);
@@ -62,6 +63,8 @@ class User extends Controller {
 				StatusMessage::add('Invalid username or password','danger');
 			}
 		}
+		//Necessary for input sanitisation
+		$f3->set('formhelper', $this->Form);
 	}
 
 	/* Handle after logging in */
@@ -106,6 +109,7 @@ class User extends Controller {
 		}
 		$_POST = $u->cast();
 		$f3->set('u',$u);
+		$f3->set('formhelper',$this->Form);
 	}
 
 	public function promote($f3) {

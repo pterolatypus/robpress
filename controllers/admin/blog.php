@@ -9,6 +9,7 @@
 			$blogs = $this->Model->map($posts,'user_id','Users');
 			$blogs = $this->Model->map($posts,array('post_id','Post_Categories','category_id'),'Categories',false,$blogs);
 			$f3->set('blogs',$blogs);
+			$f3->set('formhelper',$this->Form);
 		}
 
 		public function delete($f3) {
@@ -20,7 +21,7 @@
 			$cats = $this->Model->Post_Categories->fetchAll(array('post_id' => $postid));
 			foreach($cats as $cat) {
 				$cat->erase();
-			}	
+			}
 
 			\StatusMessage::add('Post deleted succesfully','success');
 			return $f3->reroute('/admin/blog');
@@ -33,7 +34,7 @@
 				$post->title = $title;
 				$post->content = $content;
 				$post->summary = $summary;
-				$post->user_id = $this->Auth->user('id');	
+				$post->user_id = $this->Auth->user('id');
 				$post->created = $post->modified = mydate();
 
 				//Determine whether to publish or draft
@@ -62,6 +63,7 @@
 			}
 			$categories = $this->Model->Categories->fetchList();
 			$f3->set('categories',$categories);
+			$f3->set('formhelper',$this->Form);
 		}
 
 		public function edit($f3) {
@@ -73,13 +75,13 @@
 				$post->copyfrom('POST');
 				$post->modified = mydate();
 				$post->user_id = $this->Auth->user('id');
-				
+
 				//Determine whether to publish or draft
 				if(!isset($Publish)) {
 					$post->published = null;
 				} else {
 					$post->published = mydate($published);
-				} 
+				}
 
 				//Save changes
 				$post->save();
@@ -90,8 +92,8 @@
 				foreach($old as $oldcategory) {
 					$oldcategory->erase();
 				}
-				
-				//Now assign new categories				
+
+				//Now assign new categories
 				if(!isset($categories)) { $categories = array(); }
 				foreach($categories as $category) {
 					$link->reset();
@@ -102,16 +104,17 @@
 
 				\StatusMessage::add('Post updated succesfully','success');
 				return $f3->reroute('/admin/blog');
-			} 
-			$_POST = $post->cast();		
+			}
+			$_POST = $post->cast();
 			foreach($blog['Categories'] as $cat) {
 				if(!$cat) continue;
 				$_POST['categories'][] = $cat->id;
 			}
-	
+
 			$categories = $this->Model->Categories->fetchList();
 			$f3->set('categories',$categories);
 			$f3->set('post',$post);
+			$f3->set('formhelper',$this->Form);
 		}
 
 

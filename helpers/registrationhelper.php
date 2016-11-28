@@ -2,7 +2,7 @@
 
   class RegistrationHelper {
 
-    /** Construct a new Regsitration helper */
+    /** Construct a new Registration helper */
     public function __construct($controller) {
       $this->controller = $controller;
     }

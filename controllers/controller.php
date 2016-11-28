@@ -13,7 +13,7 @@ class Controller {
 		$this->Model = new Model($this);
 
 		//Load helpers
-		$helpers = array('Auth', 'Registration');
+		$helpers = array('Auth', 'Registration', 'XSS', 'Form');
 		foreach($helpers as $helper) {
 			$helperclass = $helper . "Helper";
 			$this->$helper = new $helperclass($this);

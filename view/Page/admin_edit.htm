@@ -2,7 +2,7 @@
 <h3><?=$pagetitle?></h3>
 
 <?php
-$form = new Form(); 
+$form = $formhelper->getForm(); 
 echo $form->start();
 echo $form->add('content',array('type' => 'wysiwyg', 'value' => h($page)));
 echo $form->add('Save Page',array('type' => 'submit'));

@@ -13,7 +13,7 @@
 	//Get to address
 	$to = $site['email'];
 
-	$form = new Form();
+	$form = $formhelper->getForm();
 	echo $form->start();
 	echo $form->add('from',array('type' => 'text', 'value' => $from));
 

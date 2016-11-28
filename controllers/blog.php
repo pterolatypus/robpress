@@ -1,7 +1,7 @@
 <?php
 class Blog extends Controller {
-	
-	public function index($f3) {	
+
+	public function index($f3) {
 		if ($f3->exists('PARAMS.3')) {
 			$categoryid = $f3->get('PARAMS.3');
 			$category = $this->Model->Categories->fetch($categoryid);
@@ -26,7 +26,7 @@ class Blog extends Controller {
 		if(empty($post)) {
 			return $f3->route('/');
 		}
-		
+
 		$blog = $this->Model->map($post,'user_id','Users');
 		$blog = $this->Model->map($post,array('post_id','Post_Categories','category_id'),'Categories',false,$blog);
 
@@ -34,7 +34,9 @@ class Blog extends Controller {
 		$allcomments = $this->Model->map($comments,'user_id','Users');
 
 		$f3->set('comments',$allcomments);
-		$f3->set('blog',$blog);		
+		$f3->set('blog',$blog);
+		$f3->set('xsshelper', $this->XSS);
+		$f3->set('formhelper', $this->Form);
 	}
 
 	public function reset($f3) {
@@ -102,6 +104,7 @@ class Blog extends Controller {
 	}
 
 	public function search($f3) {
+		$f3->set('formhelper', $this->Form);
 		if($this->request->is('post')) {
 			extract($this->request->data);
 			$f3->set('search',$search);
@@ -111,7 +114,7 @@ class Blog extends Controller {
 			$ids = $this->db->connection->exec("SELECT id FROM `posts` WHERE `title` LIKE \"%$search%\" OR `content` LIKE '%$search%'");
 			$ids = Hash::extract($ids,'{n}.id');
 			if(empty($ids)) {
-				StatusMessage::add('No search results found for ' . $search); 
+				StatusMessage::add('No search results found for ' . $search);
 				return $f3->reroute('/blog/search');
 			}
 
@@ -121,7 +124,7 @@ class Blog extends Controller {
 			$blogs = $this->Model->map($posts,array('post_id','Post_Categories','category_id'),'Categories',false,$blogs);
 
 			$f3->set('blogs',$blogs);
-			$this->action = 'results';	
+			$this->action = 'results';
 		}
 	}
 }

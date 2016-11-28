@@ -12,6 +12,7 @@
 			}
 			$f3->set('categories',$categories);
 			$f3->set('counts',$counts);
+			$f3->set('formhelper',$this->Form);
 		}
 
 		public function add($f3) {
@@ -30,10 +31,10 @@
 			$category = $this->Model->Categories->fetchById($categoryid);
 			$category->erase();
 
-			//Delete links		
+			//Delete links
 			$links = $this->Model->Post_Categories->fetchAll(array('category_id' => $categoryid));
-			foreach($links as $link) { $link->erase(); } 
-	
+			foreach($links as $link) { $link->erase(); }
+
 			\StatusMessage::add('Category deleted succesfully','success');
 			return $f3->reroute('/admin/category');
 		}
@@ -48,6 +49,7 @@
 				return $f3->reroute('/admin/category');
 			}
 			$f3->set('category',$category);
+			$f3->set('formhelper',$this->Form);
 		}
 
 

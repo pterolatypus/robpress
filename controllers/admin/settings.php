@@ -19,6 +19,7 @@ class Settings extends AdminController {
 			\StatusMessage::add('Settings updated','success');
 		}
 		$f3->set('settings',$settings);
+		$f3->set('formhelper',$this->Form);
 	}
 
 	public function clearcache($f3) {
@@ -27,13 +28,13 @@ class Settings extends AdminController {
 		$this->delTree($cache);
 	}
 
-	public function delTree($dir) { 
-		$files = array_diff(scandir($dir), array('.','..')); 
+	public function delTree($dir) {
+		$files = array_diff(scandir($dir), array('.','..'));
 		foreach ($files as $file) {
-			(is_dir("$dir/$file") && !is_link($dir)) ? $this->delTree("$dir/$file") : unlink("$dir/$file"); 
+			(is_dir("$dir/$file") && !is_link($dir)) ? $this->delTree("$dir/$file") : unlink("$dir/$file");
 		}
-		return rmdir($dir); 
-	} 
+		return rmdir($dir);
+	}
 
 }
 

@@ -3,7 +3,7 @@
 
 <?php
 
-	$form = new Form();
+	$form = $formhelper->getForm();
 	echo $form->start();
 	echo $form->add('username');
 	echo $form->add('displayname',array('label' => 'Display Name'));

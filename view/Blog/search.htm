@@ -4,7 +4,7 @@
 <p>What would you like to search for?</p>
 
 <?
-	$form = new Form(); 
+	$form = $formhelper->getForm();
 	echo $form->start();
 	echo $form->add('search');
 	echo $form->add('Search',array('type' => 'submit'));

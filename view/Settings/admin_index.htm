@@ -1,7 +1,7 @@
 <h2>Blog Settings</h2>
 
 <?php
-$form = new Form(); 
+$form = $formhelper->getForm(); 
 echo $form->start();
 ?>
 
@@ -13,5 +13,5 @@ echo $form->add($setting->setting,array('label' => $setting->title, 'type' => $s
 <hr/>
 <?php
 echo $form->add('Save Settings',array('type' => 'submit'));
-echo $form->end(); 
+echo $form->end();
 ?>

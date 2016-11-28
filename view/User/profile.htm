@@ -7,7 +7,7 @@
 
 <?php
 
-	$form = new Form();
+	$form = $formhelper->getForm();
 	echo $form->start(array('type' => 'file'));
 	echo $form->add('displayname',array('label' => 'Display Name'));
 	echo $form->add('password',array('type' => 'password', 'label' => 'Change Password','value' => ''));
@@ -20,4 +20,3 @@
 	echo $form->end();
 
 ?>
-
