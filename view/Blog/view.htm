@@ -56,11 +56,11 @@ if(!empty($blog['Users'])) {
 <p><em>Awaiting moderation</em></p>
 <? endif; ?>
 <?if($user['level'] > 1):?>
-<a href="<?=$site['base']?>/blog/moderate/<?=$comment['Comments']->id?>/0" class="btn btn-danger">Delete</a>
+<a href="<?=$site['base']?>/admin/comment/moderate/<?=$comment['Comments']->id?>/0" class="btn btn-danger">Delete</a>
 <a href="<?=$site['base']?>/admin/comment/edit/<?=$comment['Comments']->id?>" class="btn btn-default">Edit</a>
 <?endif;?>
 <?if($can_moderate == 1):?>
-<a href="<?=$site['base']?>/blog/moderate/<?=$comment['Comments']->id?>/1" class="btn btn-success">Approve Comment</a>
+<a href="<?=$site['base']?>/admin/comment/moderate/<?=$comment['Comments']->id?>/1" class="btn btn-success">Approve Comment</a>
 <?endif;?>
 <div class="clearfix"> </div>
 </div>

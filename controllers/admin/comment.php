@@ -35,6 +35,23 @@ class Comment extends AdminController {
 		$f3->set('xsshelper',$this->XSS);
 	}
 
+	public function moderate($f3) {
+		list($id,$option) = explode("/",$f3->get('PARAMS.3'));
+		$comments = $this->Model->Comments;
+		$comment = $comments->fetch($id);
+
+		$post_id = $comment->blog_id;
+		//Approve
+		if ($option == 1) {
+			$comment->moderated = 1;
+			$comment->save();
+		} else {
+			$comment->erase();
+		}
+		StatusMessage::add('The comment has been moderated');
+		$f3->reroute('/blog/view/' . $comment->blog_id);
+	}
+
 }
 
 ?>

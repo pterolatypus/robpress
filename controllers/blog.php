@@ -95,18 +95,9 @@ class Blog extends Controller {
 			//Get search results
 			$search = str_replace("*","%",$search); //Allow * as wildcard
 
-			//Fixed to use prepared statements
-			//Old:
 			//$ids = $this->db->connection->exec("SELECT id FROM `posts` WHERE `title` LIKE \"%$search%\" OR `content` LIKE '%$search%'");
-			//New:
-			//Don't need to recompile the statement every time
-			if(!property_exists($this, 'statement')) {
-				$this->statement = $this->db->prepare("SELECT id FROM `posts` WHERE `title` LIKE ? OR `content` LIKE ?");
-			}
-			//Execute with the given search term and fetch the results
-			$stmt = $this->statement;
-			$stmt->execute(array($search, $search));
-			$ids = $stmt->fetchAll();
+			//Fixed to use prepared statements
+			$ids = $this->db->execprepared("SELECT id FROM `posts` WHERE `title` LIKE ? OR `content` LIKE ?", array($search, $search));
 
 			$ids = Hash::extract($ids,'{n}.id');
 			if(empty($ids)) {

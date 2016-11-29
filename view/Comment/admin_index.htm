@@ -23,8 +23,8 @@
 <a href="<?=$site['base']?>/blog/view/<?=$comment['Posts']->id?>"><?=$xsshelper->sanitise($comment['Posts']->title, array('html'))?></a>
 </td>
 <td>
-<a class="btn btn-success" href="<?=$site['base']?>/blog/moderate/<?=$comment['Comments']->id?>/1"><i class="fa fa-check"></i></a>
-<a class="btn btn-danger" href="<?=$site['base']?>/blog/moderate/<?=$comment['Comments']->id?>/0"><i class="fa fa-times"></i></a>
+<a class="btn btn-success" href="<?=$site['base']?>/admin/comment/moderate/<?=$comment['Comments']->id?>/1"><i class="fa fa-check"></i></a>
+<a class="btn btn-danger" href="<?=$site['base']?>/admin/comment/moderate/<?=$comment['Comments']->id?>/0"><i class="fa fa-times"></i></a>
 <a class="btn btn-default" href="<?=$site['base']?>/admin/comment/edit/<?=$comment['Comments']->id?>"><i class="fa fa-pencil"></i></a>
 </td>
 </tr>
@@ -56,7 +56,7 @@
 <a href="<?=$site['base']?>/blog/view/<?=$comment['Posts']->id?>"><?=$xsshelper->sanitise($comment['Posts']->title, array('html'))?></a>
 </td>
 <td>
-<a class="btn btn-danger" href="<?=$site['base']?>/blog/moderate/<?=$comment['Comments']->id?>/0"><i class="fa fa-times"></i></a>
+<a class="btn btn-danger" href="<?=$site['base']?>/admin/comment/moderate/<?=$comment['Comments']->id?>/0"><i class="fa fa-times"></i></a>
 <a class="btn btn-default" href="<?=$site['base']?>/admin/comment/edit/<?=$comment['Comments']->id?>"><i class="fa fa-pencil"></i></a>
 </td>
 </tr>

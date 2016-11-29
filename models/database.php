@@ -35,6 +35,12 @@ class Database {
 		return $statement;
 	}
 
+	public function execprepared($sql, $params) {
+		$stmt = $this->prepare($sql);
+		$stmt->execute($params);
+		return $stmt->fetchAll();
+	}
+
 }
 
 ?>
