@@ -13,7 +13,7 @@ class Controller {
 		$this->Model = new Model($this);
 
 		//Load helpers
-		$helpers = array('Auth', 'Registration', 'XSS', 'Form');
+		$helpers = array('Auth', 'Registration', 'XSS', 'Form', 'Error');
 		foreach($helpers as $helper) {
 			$helperclass = $helper . "Helper";
 			$this->$helper = new $helperclass($this);
@@ -40,10 +40,11 @@ class Controller {
 		//Extract request data
 		extract($this->request->data);
 
+		//FIXED - Wtf is this? It doesn't even do anything
 		//Process before route code
-		if(isset($beforeCode)) {
-			$f3->process($beforeCode);
-		}
+		//if(isset($beforeCode)) {
+		//	$f3->process($beforeCode);
+		//}
 	}
 
 	public function afterRoute($f3) {
@@ -91,10 +92,11 @@ class Controller {
 		$content = View::instance()->render("$controller/$action.htm");
 		$f3->set('content',$content);
 
+		//FIXED - Wtf is this? It doesn't even do anything
 		//Process before route code
-		if(isset($afterCode)) {
-			$f3->process($afterCode);
-		}
+		//if(isset($afterCode)) {
+		//	$f3->process($afterCode);
+		//}
 
 		//Render template
 		echo View::instance()->render($this->layout . '.htm');

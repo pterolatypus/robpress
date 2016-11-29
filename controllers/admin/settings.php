@@ -26,6 +26,7 @@ class Settings extends AdminController {
 		$cache = isset($this->request->data['cache']) ? getcwd() . '/' . $this->request->data['cache'] : getcwd() . '/tmp/cache';
 		$cache = str_replace(".","",$cache);
 		$this->delTree($cache);
+		$f3->reroute('/');
 	}
 
 	public function delTree($dir) {

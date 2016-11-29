@@ -39,7 +39,7 @@
 			//$results = $db->query("SELECT * FROM `users` WHERE `username`='$username' AND `password`='$password'");
 			//FIXED - login now uses prepared statements to avoid SQL injection
 			$stmt = $db->prepare("SELECT * FROM `users` WHERE `username`=? AND `password`=?");
-			$stmt->execute($username, $password);
+			$stmt->execute(array($username, $password));
 			$results = $stmt->fetchAll();
 
 			if (!empty($results)) {

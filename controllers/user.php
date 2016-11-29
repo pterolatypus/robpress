@@ -4,6 +4,9 @@ class User extends Controller {
 	public function view($f3) {
 		$userid = $f3->get('PARAMS.3');
 		$u = $this->Model->Users->fetch($userid);
+		if(empty($u)) {
+			$this->Error->notfound();
+		}
 
 		$articles = $this->Model->Posts->fetchAll(array('user_id' => $userid));
 		$comments = $this->Model->Comments->fetchAll(array('user_id' => $userid));

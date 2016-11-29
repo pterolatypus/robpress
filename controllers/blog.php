@@ -25,7 +25,7 @@ class Blog extends Controller {
 		}
 		$post = $this->Model->Posts->fetch($id);
 		if(empty($post)) {
-			return $f3->route('/');
+			$this->Error->notfound();
 		}
 
 		$blog = $this->Model->map($post,'user_id','Users');
@@ -84,24 +84,6 @@ class Blog extends Controller {
 			}
 			return $f3->reroute('/blog/view/' . $id);
 		}
-	}
-
-	public function moderate($f3) {
-		list($id,$option) = explode("/",$f3->get('PARAMS.3'));
-		$comments = $this->Model->Comments;
-		$comment = $comments->fetch($id);
-
-		$post_id = $comment->blog_id;
-		//Approve
-		if ($option == 1) {
-			$comment->moderated = 1;
-			$comment->save();
-		} else {
-		//Deny
-			$comment->erase();
-		}
-		StatusMessage::add('The comment has been moderated');
-		$f3->reroute('/blog/view/' . $comment->blog_id);
 	}
 
 	public function search($f3) {
