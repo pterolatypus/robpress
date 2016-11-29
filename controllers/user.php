@@ -30,6 +30,9 @@ class User extends Controller {
 				$user->created = mydate();
 				$user->bio = '';
 				$user->level = 1;
+				do {
+					$user->id = mt_rand();
+				} while (!$this->Registration->check(array('id' => $user->id))));
 				$user->setPassword($password);
 				if(empty($displayname)) {
 					$user->displayname = $user->username;

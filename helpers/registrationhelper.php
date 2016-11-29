@@ -82,6 +82,14 @@
       return $allowed;
     }
 
+    function check_id($param) {
+      $allowed = true;
+
+      $allowed = $this->check_id_available($param) && $allowed;
+
+      return $allowed;
+    }
+
     //Single checks for validation
 
     function check_username_valid($username) {
@@ -131,6 +139,14 @@
       $check = $this->controller->Model->Users->fetch(array('username' => $username));
       if(!empty($check) && ($id<0 || $check['id'] != $id)) {
         StatusMessage::add('Sorry, that username is already taken','danger');
+        return false;
+      }
+      return true;
+    }
+
+    function check_id_available($id) {
+      $check = $this->controller->Model->Users->fetch(array('id' => $id));
+      if(!empty($check)) {
         return false;
       }
       return true;

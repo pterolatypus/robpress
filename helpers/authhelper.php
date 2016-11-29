@@ -52,8 +52,11 @@
 		public function logout() {
 			$f3=Base::instance();
 
+
 			//Kill the session
+			//FIXED - Though I should actually remove the session cookie, too
 			session_destroy();
+			setcookie(session_name(), '', time() - 42000,'/');
 
 			//Kill the cookie
 			setcookie('RobPress_User','',time()-3600,'/');
@@ -64,21 +67,16 @@
 
 			//Remove previous session
 			session_destroy();
+			setcookie(session_name(), '', time() - 42000,'/');
 
 			//Setup new session
-			//This will be the same every time so is useless as a session
-			//Also, ewwww MD5?
-			//session_id(md5($user['id']));
-			//Jus use the built-in version :S
-			session_start();
+			new Session(NULL, 'CSRF');
 
 			//Setup cookie for storing user details and for relogging in
 			//Bad bad bad, don't send serialized objects
 			//TODO: Implement proper tokens for this sort of thing
 			setcookie('RobPress_User',base64_encode(serialize($user)),time()+3600*24*30,'/');
 
-			//And begin!
-			new Session();
 		}
 
 		/** Not used anywhere in the code, for debugging only */
