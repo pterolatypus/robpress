@@ -19,6 +19,7 @@ class User extends AdminController {
 			//Check that the new information is valid (the rules apply to admins, too)
 			if ($this->Registration->check(array('username_noncollide'=>array($username, $id), 'displayname'=>$displayname,'password'=>$password))) {
 
+				//If valid, save the updated details into the database
 				$u->copyfrom('POST');
 				$u->setPassword($this->request->data['password']);
 				$u->save();
@@ -28,6 +29,7 @@ class User extends AdminController {
 				return $f3->reroute('/admin/user');
 			} else {
 				//If it fails, stay on the same page
+				//(the checking method handles status messages, so we don't have to)
 				return $f3->reroute($f3->get('url'));
 			}
 		}

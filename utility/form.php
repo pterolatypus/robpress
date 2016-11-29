@@ -30,7 +30,7 @@ class Form {
 		$output = '<select class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '">';
 		foreach($options['items'] as $value=>$label) {
 			$checked = ($options['value'] == $value) ? 'selected="selected"' : '';
-			$output .= '<option value="'.$this->XSS->sanitise($options['value'], array('html')) .'" '.$checked.'>'.$label.'</option>';
+			$output .= '<option value="'. $value .'" '.$checked.'>'.$label.'</option>';
 		}
 		$output .= '</select>';
 		return $output;
