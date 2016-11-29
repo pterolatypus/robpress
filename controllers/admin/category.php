@@ -13,6 +13,7 @@
 			$f3->set('categories',$categories);
 			$f3->set('counts',$counts);
 			$f3->set('formhelper',$this->Form);
+			$f3->set('xsshelper',$this->XSS);
 		}
 
 		public function add($f3) {
@@ -50,6 +51,8 @@
 			}
 			$f3->set('category',$category);
 			$f3->set('formhelper',$this->Form);
+			$f3->set('xsshelper',$this->XSS);
+			
 		}
 
 

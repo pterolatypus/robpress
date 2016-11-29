@@ -17,6 +17,7 @@ class Comment extends AdminController {
 
 		$f3->set('unmoderated',$unmoderated);
 		$f3->set('moderated',$moderated);
+		$f3->set('xsshelper',$this->XSS);
 	}
 
 	public function edit($f3) {
@@ -31,6 +32,7 @@ class Comment extends AdminController {
 		$_POST = $comment;
 		$f3->set('comment',$comment);
 		$f3->set('formhelper',$this->Form);
+		$f3->set('xsshelper',$this->XSS);
 	}
 
 }

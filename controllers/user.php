@@ -19,7 +19,7 @@ class User extends Controller {
 
 			extract($this->request->data);
 
-			if ($this->Registration->check($username,$displayname,$email,$password,$password2)) {
+			if ($this->Registration->check(array('username'=>$username,'displayname'=>$displayname,'email'=>$email,'password_pair'=>array($password, $password2)))) {
 
 
 				$user = $this->Model->Users;

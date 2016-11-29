@@ -15,12 +15,12 @@
 <?foreach($unmoderated as $comment): ?>
 <tr>
 <td>
-<a href="<?=$site['base']?>/user/view/<?=$comment['Users']->id?>"><?=$comment['Users']->username?></a>
+<a href="<?=$site['base']?>/user/view/<?=$comment['Users']->id?>"><?=$xsshelper->sanitise($comment['Users']->displayname, array('html'))?></a>
 </td>
-<td><?=$comment['Comments']->subject?></td>
+<td><?=$xsshelper->sanitise($comment['Comments']->subject, array('html'))?></td>
 <td style="font-size: 80%"><?=$comment['Comments']->message?></td>
 <td>
-<a href="<?=$site['base']?>/blog/view/<?=$comment['Posts']->id?>"><?=$comment['Posts']->title?></a>
+<a href="<?=$site['base']?>/blog/view/<?=$comment['Posts']->id?>"><?=$xsshelper->sanitise($comment['Posts']->title, array('html'))?></a>
 </td>
 <td>
 <a class="btn btn-success" href="<?=$site['base']?>/blog/moderate/<?=$comment['Comments']->id?>/1"><i class="fa fa-check"></i></a>
@@ -48,12 +48,12 @@
 <?foreach($moderated as $comment): ?>
 <tr>
 <td>
-<a href="<?=$site['base']?>/user/view/<?=$comment['Users']->id?>"><?=$comment['Users']->username?></a>
+<a href="<?=$site['base']?>/user/view/<?=$comment['Users']->id?>"><?=$xsshelper->sanitise($comment['Users']->displayname, array('html'))?></a>
 </td>
-<td><?=$comment['Comments']->subject?></td>
+<td><?=$xsshelper->sanitise($comment['Comments']->subject, array('html'))?></td>
 <td style="font-size: 80%"><?=$comment['Comments']->message?></td>
 <td>
-<a href="<?=$site['base']?>/blog/view/<?=$comment['Posts']->id?>"><?=$comment['Posts']->title?></a>
+<a href="<?=$site['base']?>/blog/view/<?=$comment['Posts']->id?>"><?=$xsshelper->sanitise($comment['Posts']->title, array('html'))?></a>
 </td>
 <td>
 <a class="btn btn-danger" href="<?=$site['base']?>/blog/moderate/<?=$comment['Comments']->id?>/0"><i class="fa fa-times"></i></a>
@@ -63,5 +63,3 @@
 <?endforeach;?>
 </tbody></table>
 <?endif;?>
-
-

@@ -44,7 +44,7 @@ class Form {
 			$output .= '
 				<div class="checkbox">
 				<label>
-				<input type="checkbox" name="'.$options['field'].'[]" '.$checked.' value="'. $this->XSS->sanitise($value, array('html')) .'">'.$label.'
+				<input type="checkbox" name="'.$options['field'].'[]" '.$checked.' value="'. $this->XSS->sanitise($value, array('html')) .'">'.$this->XSS->sanitise($label, array('html')).'
 				</label>
 				</div>';
 		}

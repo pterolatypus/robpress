@@ -7,46 +7,88 @@
       $this->controller = $controller;
     }
 
-    public function check($username,$displayname,$email,$password,$password2) {
-
+    public function check($params) {
       $allowed = true;
 
-
-      if(!preg_match('/^[A-Za-z][A-Za-z0-9\-_]{0,62}$/', $username)) {
-        StatusMessage::add('Usernames must be between 1 and 63 characters, may only contain letters (a-z, A-Z) digits (0-9) hyphens (-) and underscores (_) and must start with a letter', 'danger');
-        $allowed = false;
-      }
-
-      if(!preg_match('/^[A-Za-z][A-Za-z0-9\-_]{0,62}$/', $displayname)) {
-        StatusMessage::add('Display names must be between 1 and 63 characters, may only contain letters (a-z, A-Z) digits (0-9) hyphens (-) and underscores (_) and must start with a letter', 'danger');
-        $allowed = false;
-      }
-
-      if(!preg_match('/^(?=[A-Za-z0-9][A-Za-z0-9@._%+-]{5,253}+$)[A-Za-z0-9._%+-]{1,64}+@(?:(?=[A-Za-z0-9-]{1,63}+\.)[A-Za-z0-9]++(?:-[A-Za-z0-9]++)*+\.){1,8}+[A-Za-z]{2,63}+$/', $email)) {
-        StatusMessage::add('You must enter a valid email address', 'danger');
-        $allowed = false;
-      }
-
-      if(!preg_match('/^[A-Za-z._%!$&*+-]{6,62}$/', $password)) {
-        StatusMessage::add('Passwords must be between 6 and 63 characters and may only contain letters (a-z, A-Z), digits (0-9) and certain special characters (._%+-!$&*)', 'danger');
-        $allowed = false;
-      }
-
-			if($password != $password2) {
-				StatusMessage::add('Passwords must match','danger');
-				$allowed = false;
-			}
-
-      //Don't bother with costly database lookups unless we know we have to
-      if($allowed) {
-        $check = $this->controller->Model->Users->fetch(array('username' => $username));
-			  if(!empty($check)) {
-				  StatusMessage::add('Sorry, that username is already taken','danger');
-				  $allowed = false;
-			  }
+      foreach ($params as $type=>$param) {
+        switch($type) {
+          case "username":
+            $allowed = $allowed && $this->check_username_valid($param);
+            $allowed = $allowed && $this->check_username_available($param, -1);
+            break;
+          case "username_noncollide":
+            $allowed = $allowed && $this->check_username_valid($param[0]);
+            $allowed = $allowed && $this->check_username_available($param[0], $param[1]);
+            break;
+          case "displayname":
+            $allowed = $allowed && $this->check_displayname_valid($param);
+            break;
+          case "email":
+            $allowed = $allowed && $this->check_email_valid($param);
+            break;
+          case "password":
+            $allowed = $allowed && $this->check_password_valid($param);
+            break;
+          case "password_pair":
+            $allowed = $allowed && $this->check_password_valid($param[0]);
+            $allowed = $allowed && $this->check_passwords_match($param);
+            break;
+        }
       }
 
       return $allowed;
+    }
+
+    public function check_username_valid($username) {
+      if(!preg_match('/^[A-Za-z][A-Za-z0-9\-_]{0,62}$/', $username)) {
+        StatusMessage::add('Usernames must be between 1 and 63 characters, may only contain letters (a-z, A-Z) digits (0-9) hyphens (-) and underscores (_) and must start with a letter', 'danger');
+        return false;
+      }
+      return true;
+    }
+
+    public function check_displayname_valid($displayname) {
+      if(!preg_match('/^[A-Za-z][A-Za-z0-9\-_]{0,62}$/', $displayname)) {
+        StatusMessage::add('Display names must be between 1 and 63 characters, may only contain letters (a-z, A-Z) digits (0-9) hyphens (-) and underscores (_) and must start with a letter', 'danger');
+        return false;
+      }
+      return true;
+    }
+
+    public function check_email_valid($email) {
+      if(!preg_match('/^(?=[A-Za-z0-9][A-Za-z0-9@._%+-]{5,253}+$)[A-Za-z0-9._%+-]{1,64}+@(?:(?=[A-Za-z0-9-]{1,63}+\.)[A-Za-z0-9]++(?:-[A-Za-z0-9]++)*+\.){1,8}+[A-Za-z]{2,63}+$/', $email)) {
+        StatusMessage::add('You must enter a valid email address', 'danger');
+        return false;
+      }
+      return true;
+    }
+
+    public function check_password_valid($password) {
+      if(!preg_match('/^[A-Za-z._%!$&*+-]{6,62}$/', $password)) {
+        StatusMessage::add('Passwords must be between 6 and 63 characters and may only contain letters (a-z, A-Z), digits (0-9) and certain special characters (._%+-!$&*)', 'danger');
+        return false;
+      }
+      return true;
+    }
+
+    public function check_passwords_match($password_pair) {
+      if($password_pair[0] != $password_pair[1]) {
+				StatusMessage::add('Passwords must match','danger');
+			 return false;
+			}
+      return true;
+    }
+
+    //ID parameter allows it to accept one already used username
+    //for admins editing users without changing their username
+    //(otherwise it detects that the username is already in use)
+    public function check_username_available($username, $id) {
+      $check = $this->controller->Model->Users->fetch(array('username' => $username));
+      if(!empty($check) && ($id<0 || $check['id'] != $id)) {
+        StatusMessage::add('Sorry, that username is already taken','danger');
+        return false;
+      }
+      return true;
     }
 
   }

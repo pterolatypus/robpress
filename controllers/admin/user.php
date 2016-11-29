@@ -13,11 +13,23 @@ class User extends AdminController {
 		$id = $f3->get('PARAMS.3');
 		$u = $this->Model->Users->fetch($id);
 		if($this->request->is('post')) {
-			$u->copyfrom('POST');
-			$u->setPassword($this->request->data['password']);
-			$u->save();
-			\StatusMessage::add('User updated succesfully','success');
-			return $f3->reroute('/admin/user');
+
+			extract($this->request->data);
+
+			//Check that the new information is valid (the rules apply to admins, too)
+			if ($this->Registration->check(array('username_noncollide'=>array($username, $id), 'displayname'=>$displayname,'password'=>$password))) {
+
+				$u->copyfrom('POST');
+				$u->setPassword($this->request->data['password']);
+				$u->save();
+				\StatusMessage::add('User updated succesfully','success');
+
+				//If it succeeds, reroute to index
+				return $f3->reroute('/admin/user');
+			} else {
+				//If it fails, stay on the same page
+				return $f3->reroute($f3->get('url'));
+			}
 		}
 		$_POST = $u->cast();
 		$f3->set('u',$u);
