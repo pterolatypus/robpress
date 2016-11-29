@@ -20,7 +20,7 @@ class Form {
 			$output = '
 				<div class="checkbox">
 				<label>
-				<input type="checkbox" name="'.$options['field'].'" '.$checked.' value="1">'.$options['label'].'
+				<input type="checkbox" name="'.$options['field'].'" '.$checked.' value="1">'.$this->XSS->sanitise($options['label'], array('html')).'
 				</label>
 				</div>';
 		return $output;

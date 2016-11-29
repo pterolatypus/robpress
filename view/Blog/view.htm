@@ -12,12 +12,12 @@ if(!empty($blog['Users'])) {
 
 ?>
 
-<h2><?=$post->title?></h2>
-<h4>Posted by <a href="<?=$site['base']?>/user/view/<?=$author->id?>"><?=$author->displayname?></a> on <?=nicedate($post->created)?></h4>
+<h2><?=$xsshelper->sanitise($post->title, array('html'))?></h2>
+<h4>Posted by <a href="<?=$site['base']?>/user/view/<?=$author->id?>"><?= $xsshelper->sanitise($author->displayname, array('html')) ?></a> on <?=nicedate($post->created)?></h4>
 <? if(sizeof($blog['Categories']) > 0): ?>
 <p><em>Posted in:
 <? foreach($blog['Categories'] as $num=>$category): ?>
-<a href="<?=$site['base']?>/blog/index/<?=$category->id?>"><?= $category->title ?></a><? if(($num + 1) < sizeof($blog['Categories'])) { echo ', '; } ?>
+<a href="<?=$site['base']?>/blog/index/<?=$category->id?>"><?= $xsshelper->sanitise($category->title, array('html')) ?></a><? if(($num + 1) < sizeof($blog['Categories'])) { echo ', '; } ?>
 <? endforeach; ?>
 </em></p>
 <? endif; ?>
@@ -47,8 +47,8 @@ if(!empty($blog['Users'])) {
 ?>
 <div class="comment <?=$class?>">
 <?php $avatar = empty($u->avatar) ? '/img/avatar.png' : $comment['Users']->avatar; ?>
-<h4><?=$comment['Comments']->subject?> <span style="float: right">
-<a href="<?=$site['base']?>/user/view/<?=$comment['Users']->id?>"><?=$comment['Users']->displayname?></a>
+<h4><?=$xsshelper->sanitise($comment['Comments']->subject, array('html'))?> <span style="float: right">
+<a href="<?=$site['base']?>/user/view/<?=$comment['Users']->id?>"><?=$xsshelper->sanitise($comment['Users']->displayname, array('html'))?></a>
 <br/><img src="<?=$site['base']?><?=$avatar?>" class="avatar"/></span></h4>
 <h6><?=nicedate($comment['Comments']->created)?></h6>
 <?=$comment['Comments']->message?>

@@ -1,5 +1,5 @@
 <?
-	$form = $formhelper->getForm(); 
+	$form = $formhelper->getForm();
 	echo $form->start();
 	echo $form->add('search');
 	echo $form->add('Search',array('type' => 'submit', 'value' => $search));
@@ -21,16 +21,16 @@ if(!empty($blog['Users'])) {
 }
 ?>
 
-<h3><a href="<?=$site['base']?>/blog/view/<?=$post->id?>"><?=$post->title?></a></h3>
-<h4>Posted by <?=$author->username?> on <?=nicedate($post->created)?></h4>
+<h3><a href="<?=$site['base']?>/blog/view/<?=$post->id?>"><?=$xsshelper->sanitise($post->title, array('html'))?></a></h3>
+<h4>Posted by <?=$xsshelper->sanitise($author->displayname, array('html'))?> on <?=nicedate($post->created)?></h4>
 <? if(sizeof($blog['Categories']) > 0): ?>
 <p><em>Posted in:
 <? foreach($blog['Categories'] as $num=>$category): ?>
-<a href="<?=$site['base']?>/blog/index/<?=$category->id?>"><?= $category->title ?></a><? if(($num + 1) < sizeof($blog['Categories'])) { echo ', '; } ?>
+<a href="<?=$site['base']?>/blog/index/<?=$category->id?>"><?= $xsshelper->sanitise($category->title, array('html')) ?></a><? if(($num + 1) < sizeof($blog['Categories'])) { echo ', '; } ?>
 <? endforeach; ?>
 </em></p>
 <? endif; ?>
 
-<?=$post->summary?>
+<?=$xsshelper->sanitise($post->summary, array('html'))?>
 <hr/>
 <?endforeach;?>

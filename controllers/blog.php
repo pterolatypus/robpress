@@ -15,6 +15,7 @@ class Blog extends Controller {
 		$blogs = $this->Model->map($posts,'user_id','Users');
 		$blogs = $this->Model->map($posts,array('post_id','Post_Categories','category_id'),'Categories',false,$blogs);
 		$f3->set('blogs',$blogs);
+		$f3->set('xsshelper', $this->XSS);
 	}
 
 	public function view($f3) {
@@ -111,10 +112,23 @@ class Blog extends Controller {
 
 			//Get search results
 			$search = str_replace("*","%",$search); //Allow * as wildcard
-			$ids = $this->db->connection->exec("SELECT id FROM `posts` WHERE `title` LIKE \"%$search%\" OR `content` LIKE '%$search%'");
+
+			//Fixed to use prepared statements
+			//Old:
+			//$ids = $this->db->connection->exec("SELECT id FROM `posts` WHERE `title` LIKE \"%$search%\" OR `content` LIKE '%$search%'");
+			//New:
+			//Don't need to recompile the statement every time
+			if(!property_exists($this, 'statement')) {
+				$this->statement = $this->db->prepare("SELECT id FROM `posts` WHERE `title` LIKE ? OR `content` LIKE ?");
+			}
+			//Execute with the given search term and fetch the results
+			$stmt = $this->statement;
+			$stmt->execute(array($search, $search));
+			$ids = $stmt->fetchAll();
+
 			$ids = Hash::extract($ids,'{n}.id');
 			if(empty($ids)) {
-				StatusMessage::add('No search results found for ' . $search);
+				StatusMessage::add('No search results found for ' . $this->XSS->sanitise($search, array('html')));
 				return $f3->reroute('/blog/search');
 			}
 
@@ -124,6 +138,7 @@ class Blog extends Controller {
 			$blogs = $this->Model->map($posts,array('post_id','Post_Categories','category_id'),'Categories',false,$blogs);
 
 			$f3->set('blogs',$blogs);
+			$f3->set('xsshelper', $this->XSS);
 			$this->action = 'results';
 		}
 	}

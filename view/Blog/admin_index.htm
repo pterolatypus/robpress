@@ -13,9 +13,9 @@
 <tbody>
 <? foreach($blogs as $blog): ?>
 <? $post = $blog['Posts']; ?>
-<? 
+<?
 if(!empty($blog['Users'])) {
-	$author = $blog['Users']; 
+	$author = $blog['Users'];
 } else {
 	$author = new stdClass();
 	$author->displayname = 'Guest';
@@ -27,15 +27,15 @@ if(!empty($blog['Users'])) {
 <tr>
 <td style="font-weight: bold">
 <a style="float: right" href="<?=$site['base']?>/admin/blog/delete/<?=$post['id']?>">&times;</a>
-<a href="<?=$site['base']?>/admin/blog/edit/<?=$post['id']?>"><?=$post['title']?></a>
+<a href="<?=$site['base']?>/admin/blog/edit/<?=$post['id']?>"><?=$xsshelper->sanitise($post['title'], array('html'))?></a>
 </td>
-<td><?=$author->username?></td>
+<td><?=$xsshelper->sanitise($author->username, array('html'))?></td>
 <td>
 <?if(sizeof($blog['Categories']) == 0):?>
 <em>Uncategorised</em>
 <?else:?>
 <?foreach($blog['Categories'] as $id=>$category):?>
-<?=$category['title']?>
+<?=$xsshelper->sanitise($category['title'], array('html'))?>
 <? if($id < (sizeof($blog['Categories']) - 1)) { echo ', '; } ?>
 <?endforeach;?>
 <?endif;?>

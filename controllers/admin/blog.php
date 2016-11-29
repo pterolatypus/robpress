@@ -10,6 +10,7 @@
 			$blogs = $this->Model->map($posts,array('post_id','Post_Categories','category_id'),'Categories',false,$blogs);
 			$f3->set('blogs',$blogs);
 			$f3->set('formhelper',$this->Form);
+			$f3->set('xsshelper',$this->XSS);
 		}
 
 		public function delete($f3) {
