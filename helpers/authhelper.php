@@ -14,6 +14,9 @@
 			//Ignore if already running session
 			if($f3->exists('SESSION.user.id')) return;
 
+			//Set a CSRF token, 'cause I couldn't get F3's built-in system to work :S
+			$f3->set("SESSION.CSRF", mt_rand());
+
 			//Log user back in from cookie
 			if($f3->exists('COOKIE.RobPress_User')) {
 				//$user = unserialize(base64_decode($f3->get('COOKIE.RobPress_User')));
@@ -99,9 +102,7 @@
 			$f3=Base::instance();
 
 			//Remove previous session
-			$f3->clear("SESSION");
-			//Setup new session
-			new Session(NULL, 'CSRF');
+			//$f3->clear("SESSION");
 
 			//Setup cookie for storing user details and for relogging in
 			//Clear previous cookie

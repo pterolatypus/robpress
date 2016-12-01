@@ -1,5 +1,6 @@
 <?php
 
+
 //Load framework
 $f3=require('lib/base.php');
 $f3->config('config/config.cfg');
@@ -12,7 +13,7 @@ $f3->config('config/db.cfg');
 include_once("bootstrap.php");
 include_once("functions.php");
 
-//Define homepage 
+//Define homepage
 $f3->route('GET /','Blog->index');
 
 //Define admin routes
@@ -26,7 +27,7 @@ $f3->route('GET|POST /@controller','@controller->index');
 $f3->route('GET|POST /@controller/@action','@controller->@action');
 $f3->route('GET|POST /@controller/@action/*','@controller->@action');
 
-//Define API 
+//Define API
 $f3->route('GET|POST /api/@model','API->display');
 $f3->route('GET|POST /api/@model/@id','API->display');
 

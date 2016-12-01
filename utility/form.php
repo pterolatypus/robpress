@@ -8,7 +8,7 @@ class Form {
 	public function start($options=array()) {
 		$action = isset($options['action']) ? $options['action'] : '';
 		$enctype = (isset($options['type']) && $options['type'] == 'file') ? 'enctype="multipart/form-data"' : ''; //Handle file uploads
-		return '<form role="form" method="post" action="'.$action.'" '.$enctype.'>';
+		return '<form role="form" method="post" action="'.$action.'" '.$enctype.'>' . '<input type="hidden" name="token" value="' . Base::instance()->get('SESSION.CSRF') . '"/>';
 	}
 
 	public function file($options) {
