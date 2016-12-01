@@ -89,7 +89,7 @@ toolbarGroups: [
 
 
 	public function password($options) {
-		return '<input type="password" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="' . $this->XSS->sanitise($options['value'], array('html')) . '">';
+		return '<input type="password" class="form-control" id="' . $options['field'] . '" name="' . $options['field'] . '" placeholder="' . $options['placeholder'] . '" value="">';
 	}
 
 	public function submit($options) {
