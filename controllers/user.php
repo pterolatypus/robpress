@@ -30,16 +30,17 @@ class User extends Controller {
 				$user->created = mydate();
 				$user->bio = '';
 				$user->level = 1;
+				//Generate random IDs until we get an unused one
 				do {
-					$user->id = mt_rand();
-				} while (!$this->Registration->check(array('id' => $user->id))));
-				$user->setPassword($password);
+					$id = mt_rand();
+					$user->id = $id;
+				} while (!empty($user->fetch(array('id' => $id))));
 				if(empty($displayname)) {
 					$user->displayname = $user->username;
 				}
 
 				//Set the users password
-				$user->setPassword($user->password);
+				$user->setPassword($password);
 				$user->save();
 
 				StatusMessage::add('Registration complete','success');

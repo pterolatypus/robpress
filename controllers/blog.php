@@ -62,6 +62,12 @@ class Blog extends Controller {
 			$comment->blog_id = $id;
 			$comment->created = mydate();
 
+			//Generate random IDs until we get an unused one
+			do {
+				$c_id = mt_rand();
+			} while (!empty($comment->fetch(array('id' => $c_id))));
+			$comment->id = $c_id;
+
 			//Moderation of comments
 			if (!empty($this->Settings['moderate']) && $this->Auth->user('level') < 2) {
 				$comment->moderated = 0;

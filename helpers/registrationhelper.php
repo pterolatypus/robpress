@@ -117,7 +117,7 @@
     }
 
     function check_password_valid($password) {
-      if(!preg_match('/^[A-Za-z._%!$&*+-]{6,62}$/', $password)) {
+      if(!preg_match('/^[A-Za-z0-9._%!$&*+-]{5,62}$/', $password)) {
         StatusMessage::add('Passwords must be between 6 and 63 characters and may only contain letters (a-z, A-Z), digits (0-9) and certain special characters (._%+-!$&*)', 'danger');
         return false;
       }
@@ -139,14 +139,6 @@
       $check = $this->controller->Model->Users->fetch(array('username' => $username));
       if(!empty($check) && ($id<0 || $check['id'] != $id)) {
         StatusMessage::add('Sorry, that username is already taken','danger');
-        return false;
-      }
-      return true;
-    }
-
-    function check_id_available($id) {
-      $check = $this->controller->Model->Users->fetch(array('id' => $id));
-      if(!empty($check)) {
         return false;
       }
       return true;

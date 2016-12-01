@@ -38,6 +38,12 @@
 				$post->user_id = $this->Auth->user('id');
 				$post->created = $post->modified = mydate();
 
+				//Generate random IDs until we get an unused one
+				do {
+					$id = mt_rand();
+				} while (!empty($post->fetch(array('id' => $id))));
+				$post->id = $id;
+
 				//Determine whether to publish or draft
 				if(!isset($Publish)) {
 					$post->published = null;

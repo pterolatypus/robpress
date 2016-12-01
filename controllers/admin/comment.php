@@ -48,7 +48,7 @@ class Comment extends AdminController {
 		} else {
 			$comment->erase();
 		}
-		StatusMessage::add('The comment has been moderated');
+		\StatusMessage::add('The comment has been moderated');
 		$f3->reroute('/blog/view/' . $comment->blog_id);
 	}
 

@@ -38,13 +38,22 @@
 
 			//$results = $db->query("SELECT * FROM `users` WHERE `username`='$username' AND `password`='$password'");
 			//FIXED - login now uses prepared statements to avoid SQL injection
-			$results = $db->execprepared("SELECT * FROM `users` WHERE `username`=? AND `password`=?", array($username, $password));
-
+			$results = $db->execprepared("SELECT * FROM `users` WHERE `username`=?", array($username));
+			//If a user was found
 			if (!empty($results)) {
+
 				$user = $results[0];
-				$this->setupSession($user);
-				return $this->forceLogin($user);
+
+				//Verify the user's password
+				if(password_verify($password, $user['password'])) {
+					//If passwords match, login
+					$this->setupSession($user);
+					return $this->forceLogin($user);
+				}
+
 			}
+
+
 			return false;
 		}
 
@@ -54,9 +63,10 @@
 
 
 			//Kill the session
-			//FIXED - Though I should actually remove the session cookie, too
-			session_destroy();
-			setcookie(session_name(), '', time() - 42000,'/');
+			//FIXED - Thought I should actually remove the session cookie, too
+			//session_destroy();
+			$f3->clear("SESSION");
+			//setcookie(session_name(), '', time() - 42000,'/');
 
 			//Kill the cookie
 			setcookie('RobPress_User','',time()-3600,'/');
