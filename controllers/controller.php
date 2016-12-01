@@ -13,7 +13,7 @@ class Controller {
 		$this->Model = new Model($this);
 
 		//Load helpers
-		$helpers = array('Auth', 'Registration', 'XSS', 'Form', 'Error');
+		$helpers = array('Auth', 'Registration', 'XSS', 'Form', 'Error', 'CSRF');
 		foreach($helpers as $helper) {
 			$helperclass = $helper . "Helper";
 			$this->$helper = new $helperclass($this);
@@ -22,6 +22,10 @@ class Controller {
 
 	public function beforeRoute($f3) {
 		$this->request = new Request();
+
+		if($this->request->is('POST')) {
+			$this->CSRF->validate($this->request->data['token']);
+		}
 
 		//Check user
 		$this->Auth->resume();

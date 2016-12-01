@@ -41,6 +41,7 @@
 		}
 
 		public function edit($f3) {
+
 			$categoryid = $f3->get('PARAMS.3');
 			$category = $this->Model->Categories->fetchById($categoryid);
 			if($this->request->is('post')) {
@@ -52,7 +53,7 @@
 			$f3->set('category',$category);
 			$f3->set('formhelper',$this->Form);
 			$f3->set('xsshelper',$this->XSS);
-			
+
 		}
 
 

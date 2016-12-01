@@ -57,6 +57,7 @@ class Blog extends Controller {
 		$id = $f3->get('PARAMS.3');
 		$post = $this->Model->Posts->fetch($id);
 		if($this->request->is('post')) {
+			
 			$comment = $this->Model->Comments;
 			$comment->copyfrom('POST');
 			$comment->blog_id = $id;
@@ -95,6 +96,7 @@ class Blog extends Controller {
 	public function search($f3) {
 		$f3->set('formhelper', $this->Form);
 		if($this->request->is('post')) {
+
 			extract($this->request->data);
 			$f3->set('search',$search);
 

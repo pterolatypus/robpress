@@ -4,6 +4,7 @@ class Contact extends Controller {
 
 	public function index($f3) {
 		if($this->request->is('post')) {
+
 			extract($this->request->data);
 			$from = "From: $from";
 

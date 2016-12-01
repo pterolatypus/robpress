@@ -95,10 +95,14 @@ class User extends Controller {
 
 	public function profile($f3) {
 		$id = $this->Auth->user('id');
-		extract($this->request->data);
+		if(!$id) {
+			$f3->reroute('/user/login?from=' . urlencode('/user/profile'));
+		}
 		$u = $this->Model->Users->fetch($id);
-		$oldpass = $u->password;
 		if($this->request->is('post')) {
+
+			extract($this->request->data);
+			$oldpass = $u->password;
 			$u->copyfrom('POST');
 			if(!empty($password)) {
 				$u->setPassword($password);
@@ -123,6 +127,8 @@ class User extends Controller {
 		$f3->set('formhelper',$this->Form);
 	}
 
+//FIXED - this isn't functionality, this is just a straight-up backdoor
+/*
 	public function promote($f3) {
 		$id = $this->Auth->user('id');
 		$u = $this->Model->Users->fetch($id);
@@ -130,6 +136,7 @@ class User extends Controller {
 		$u->save();
 		return $f3->reroute('/');
 	}
+*/
 
 }
 ?>

@@ -13,7 +13,7 @@ class User extends AdminController {
 		$id = $f3->get('PARAMS.3');
 		$user = $this->Model->Users->fetch($id);
 		if($this->request->is('post')) {
-
+			
 			extract($this->request->data);
 
 			//Check that the new information is valid (the rules apply to admins, too)

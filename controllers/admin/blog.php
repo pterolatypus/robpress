@@ -30,8 +30,8 @@
 
 		public function add($f3) {
 			if($this->request->is('post')) {
-				$post = $this->Model->Posts;
 				extract($this->request->data);
+				$post = $this->Model->Posts;
 				$post->title = $title;
 				$post->content = $content;
 				$post->summary = $summary;
