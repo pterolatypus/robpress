@@ -79,7 +79,7 @@ class User extends Controller {
 				StatusMessage::add('Logged in succesfully','success');
 
 				//Redirect to where they came from
-				if(isset($_GET['from'])) {
+				if(isset($_GET['from']) && preg_match('/^\//', $_GET['from'])) {
 					$f3->reroute($_GET['from']);
 				} else {
 					$f3->reroute('/');
@@ -101,26 +101,35 @@ class User extends Controller {
 		$u = $this->Model->Users->fetch($id);
 		if($this->request->is('post')) {
 
-			extract($this->request->data);
-			$oldpass = $u->password;
-			$u->copyfrom('POST');
-			if(!empty($password)) {
-				$u->setPassword($password);
-			} else {
-				$u->setPassword($oldpass);
+				extract($this->request->data);
+				$oldpass = $u->password;
+			if($this->Registration->check(array('displayname' => $displayname)) && (empty($password) || $this->Registration->check(array('password'=>$password)))) {
+				$u->copyfrom('POST');
+				if(!empty($password)) {
+					$u->setPassword($password);
+				} else {
+					$u->setPassword($oldpass);
+				}
+
+				//Handle avatar upload
+				if(isset($_FILES['avatar']) && isset($_FILES['avatar']['tmp_name']) && !empty($_FILES['avatar']['tmp_name'])) {
+					$file = $_FILES['avatar'];
+					if($this->Registration->check(array('avatar_file' => $file))) {
+						$url = File::Upload($file);
+						$u->avatar = $url;
+						$fail = true;
+					}
+				} else if(isset($reset)) {
+					$u->avatar = '';
+				}
+
+				if(isset($fail)) {
+				$u->save();
+				\StatusMessage::add('Profile updated succesfully','success');
+				}
 			}
 
-			//Handle avatar upload
-			if(isset($_FILES['avatar']) && isset($_FILES['avatar']['tmp_name']) && !empty($_FILES['avatar']['tmp_name'])) {
-				$url = File::Upload($_FILES['avatar']);
-				$u->avatar = $url;
-			} else if(isset($reset)) {
-				$u->avatar = '';
-			}
-
-			$u->save();
-			\StatusMessage::add('Profile updated succesfully','success');
-			return $f3->reroute('/user/profile');
+			//return $f3->reroute('/user/profile');
 		}
 		$_POST = $u->cast();
 		$f3->set('u',$u);

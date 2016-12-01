@@ -90,6 +90,15 @@
       return $allowed;
     }
 
+    function check_avatar_file($param) {
+      $allowed = true;
+
+      $allowed = $this->check_image_fileextension($param) && $allowed;
+      $allowed = $allowed && $this->check_image_width($param);
+
+      return $allowed;
+    }
+
     //Single checks for validation
 
     function check_username_valid($username) {
@@ -117,7 +126,7 @@
     }
 
     function check_password_valid($password) {
-      if(!preg_match('/^[A-Za-z0-9._%!$&*+-]{5,62}$/', $password)) {
+      if(!preg_match('/^[A-Za-z0-9._%!$&*+-]{5,63}$/', $password)) {
         StatusMessage::add('Passwords must be between 5 and 63 characters and may only contain letters (a-z, A-Z), digits (0-9) and certain special characters (._%+-!$&*)', 'danger');
         return false;
       }
@@ -139,6 +148,22 @@
       $check = $this->controller->Model->Users->fetch(array('username' => $username));
       if(!empty($check) && ($id<0 || $check['id'] != $id)) {
         StatusMessage::add('Sorry, that username is already taken','danger');
+        return false;
+      }
+      return true;
+    }
+
+    function check_image_fileextension($file) {
+        if(!preg_match('/\.(jpg|jpeg|png|bmp|tif|tif)$/', $file['name'])) {
+          StatusMessage::add('You must upload a valid jpg, png, bmp or tiff image','danger');
+          return false;
+        }
+      return true;
+    }
+
+    function check_image_width($file) {
+      if(!getimagesize($file['name']) || empty(getimagesize($file['name']))) {
+        StatusMessage::add('You must upload a valid jpg, png, bmp or tiff image','danger');
         return false;
       }
       return true;

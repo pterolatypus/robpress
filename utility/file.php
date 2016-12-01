@@ -5,9 +5,10 @@ class File {
 	public static function Upload($array,$local=false) {
 		$f3 = Base::instance();
 		extract($array);
+		$newname = mt_rand();
 		$directory = getcwd() . '/uploads';
-		$destination = $directory . '/' . $name;
-		$webdest = '/uploads/' . $name;
+		$destination = $directory . '/' . $newname;
+		$webdest = '/uploads/' . $newname;
 
 		//Local files get moved
 		if($local) {
