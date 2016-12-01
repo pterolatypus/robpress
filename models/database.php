@@ -25,20 +25,11 @@ class Database {
 	}
 
 	/** Perform a direct database query */
-	public function query($sql) {
-		$result = $this->connection->exec($sql);
-		return $result;
-	}
-
-	public function prepare($sql) {
-		$statement = $this->connection->prepare($sql);
-		return $statement;
-	}
-
-	public function execprepared($sql, $params) {
-		$stmt = $this->prepare($sql);
-		$stmt->execute($params);
-		return $stmt->fetchAll();
+	public function query($sql, $params=NULL) {
+		if($params != NULL) {
+			return $this->connection->exec($sql, $params);
+		}
+		return $this->connection->exec($sql);
 	}
 
 }

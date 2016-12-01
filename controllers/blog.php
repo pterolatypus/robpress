@@ -103,7 +103,7 @@ class Blog extends Controller {
 
 			//$ids = $this->db->connection->exec("SELECT id FROM `posts` WHERE `title` LIKE \"%$search%\" OR `content` LIKE '%$search%'");
 			//Fixed to use prepared statements
-			$ids = $this->db->execprepared("SELECT id FROM `posts` WHERE `title` LIKE ? OR `content` LIKE ?", array($search, $search));
+			$ids = $this->db->query("SELECT id FROM `posts` WHERE `title` LIKE ? OR `content` LIKE ?", array($search, $search));
 
 			$ids = Hash::extract($ids,'{n}.id');
 			if(empty($ids)) {

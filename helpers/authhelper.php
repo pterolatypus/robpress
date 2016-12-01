@@ -17,10 +17,21 @@
 			//Log user back in from cookie
 			if($f3->exists('COOKIE.RobPress_User')) {
 				$user = unserialize(base64_decode($f3->get('COOKIE.RobPress_User')));
-				$this->forceLogin($user);
+
+				/**$db = $this->controller->db;
+				$results = $db->query('SELECT user FROM logins WHERE token=?', $token);
+				if(empty($results)) {
+					$f3->clear('COOKIE.RobPress_User');
+					return;
+				}
+				$userid = $results[0];
+				*/
+
+				$this->doLogin($user);
 			}
 		}
 
+		//TODO: add brute force protection here
 		/** Perform any checks before starting login */
 		public function checkLogin($username,$password,$request,$debug) {
 
@@ -32,13 +43,14 @@
 
 		/** Look up user by username and password and log them in */
 		public function login($username,$password) {
-			$f3=Base::instance();
+			$f3=$this->controller->f3;
 			$db = $this->controller->db;
 
 
 			//$results = $db->query("SELECT * FROM `users` WHERE `username`='$username' AND `password`='$password'");
 			//FIXED - login now uses prepared statements to avoid SQL injection
-			$results = $db->execprepared("SELECT * FROM `users` WHERE `username`=?", array($username));
+			//FIXED - also implemented password hashing
+			$results = $db->query('SELECT * FROM users WHERE username=?', $username);
 			//If a user was found
 			if (!empty($results)) {
 
@@ -47,8 +59,7 @@
 				//Verify the user's password
 				if(password_verify($password, $user['password'])) {
 					//If passwords match, login
-					$this->setupSession($user);
-					return $this->forceLogin($user);
+				return $this->doLogin($user);
 				}
 
 			}
@@ -57,27 +68,32 @@
 			return false;
 		}
 
+		public function doLogin($user) {
+			$this->setupSession($user);
+			return $this->forceLogin($user);
+		}
+
 		/** Log user out of system */
 		public function logout() {
-			$f3=Base::instance();
-
+			$f3=$this->controller->f3;
 
 			//Kill the session
-			//FIXED - Thought I should actually remove the session cookie, too
+			//FIXED - use the fatfree version instead
 			//session_destroy();
 			$f3->clear("SESSION");
-			//setcookie(session_name(), '', time() - 42000,'/');
 
 			//Kill the cookie
-			setcookie('RobPress_User','',time()-3600,'/');
+			//FIXED - use the fatfree version instead
+			//setcookie('RobPress_User', '', time() - 42000,'/');
+			$f3->clear("COOKIE.RobPress_User");
 		}
 
 		/** Set up the session for the current user */
 		public function setupSession($user) {
+			$f3=Base::instance();
 
 			//Remove previous session
-			session_destroy();
-			setcookie(session_name(), '', time() - 42000,'/');
+			$f3->clear("SESSION");
 
 			//Setup new session
 			new Session(NULL, 'CSRF');
@@ -85,7 +101,7 @@
 			//Setup cookie for storing user details and for relogging in
 			//Bad bad bad, don't send serialized objects
 			//TODO: Implement proper tokens for this sort of thing
-			setcookie('RobPress_User',base64_encode(serialize($user)),time()+3600*24*30,'/');
+			$f3->set("COOKIE.RobPress_User", base64_encode(serialize($user)),time()+3600*24*30,'/');
 
 		}
 
