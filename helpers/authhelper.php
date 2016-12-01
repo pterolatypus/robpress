@@ -16,17 +16,22 @@
 
 			//Log user back in from cookie
 			if($f3->exists('COOKIE.RobPress_User')) {
-				$user = unserialize(base64_decode($f3->get('COOKIE.RobPress_User')));
+				//$user = unserialize(base64_decode($f3->get('COOKIE.RobPress_User')));
+				$token = $f3->get('COOKIE.RobPress_User');
 
-				/**$db = $this->controller->db;
+				$db = $this->controller->db;
 				$results = $db->query('SELECT user FROM logins WHERE token=?', $token);
 				if(empty($results)) {
+					//If the cookie is invalid, delete it and do nothing
 					$f3->clear('COOKIE.RobPress_User');
 					return;
 				}
+				//Fetch the user's details to log them in
 				$userid = $results[0];
-				*/
-
+				$user = $this->controller->Model->Users->fetch(array('id' => $userid));
+				//Invalidate the cookie
+				$db->query('DELETE FROM logins WHERE token=?', $token);
+				//Log the user in (serving a fresh cookie as we do)
 				$this->doLogin($user);
 			}
 		}
@@ -51,10 +56,11 @@
 			//FIXED - login now uses prepared statements to avoid SQL injection
 			//FIXED - also implemented password hashing
 			$results = $db->query('SELECT * FROM users WHERE username=?', $username);
+			//$user = $this->controller->Model->Users->fetch(array('username' => $username));
 			//If a user was found
 			if (!empty($results)) {
 
-				$user = $results[0];
+			$user = $results[0];
 
 				//Verify the user's password
 				if(password_verify($password, $user['password'])) {
@@ -94,14 +100,21 @@
 
 			//Remove previous session
 			$f3->clear("SESSION");
-
 			//Setup new session
 			new Session(NULL, 'CSRF');
 
 			//Setup cookie for storing user details and for relogging in
-			//Bad bad bad, don't send serialized objects
-			//TODO: Implement proper tokens for this sort of thing
-			$f3->set("COOKIE.RobPress_User", base64_encode(serialize($user)),time()+3600*24*30,'/');
+			//Clear previous cookie
+			$f3->clear("COOKIE.RobPress_User");
+			//Generate new token
+			$db = $this->controller->db;
+			do {
+				$newtoken = mt_rand();
+			} while (!empty($db->query('SELECT * FROM logins WHERE token=?', $newtoken)));
+			//Store token in database
+			$db->query('INSERT INTO logins VALUES(?, ?)',array(1=>$newtoken, 2=>$user['id']));
+			//Pass token to user
+			$f3->set("COOKIE.RobPress_User", $newtoken, time()+3600*24*30,'/');
 
 		}
 
