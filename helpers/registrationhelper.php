@@ -118,7 +118,7 @@
 
     function check_password_valid($password) {
       if(!preg_match('/^[A-Za-z0-9._%!$&*+-]{5,62}$/', $password)) {
-        StatusMessage::add('Passwords must be between 6 and 63 characters and may only contain letters (a-z, A-Z), digits (0-9) and certain special characters (._%+-!$&*)', 'danger');
+        StatusMessage::add('Passwords must be between 5 and 63 characters and may only contain letters (a-z, A-Z), digits (0-9) and certain special characters (._%+-!$&*)', 'danger');
         return false;
       }
       return true;

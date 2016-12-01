@@ -11,30 +11,32 @@ class User extends AdminController {
 
 	public function edit($f3) {
 		$id = $f3->get('PARAMS.3');
-		$u = $this->Model->Users->fetch($id);
+		$user = $this->Model->Users->fetch($id);
 		if($this->request->is('post')) {
 
 			extract($this->request->data);
 
 			//Check that the new information is valid (the rules apply to admins, too)
-			if ($this->Registration->check(array('username_noncollide'=>array($username, $id), 'displayname'=>$displayname,'password'=>$password))) {
+			if ($this->Registration->check(array('username_noncollide'=>array($username, $id), 'displayname'=>$displayname)) && (empty($password) || $this->Registration->check(array('password'=>$password)))) {
 
 				//If valid, save the updated details into the database
-				$u->copyfrom('POST');
-				$u->setPassword($this->request->data['password']);
-				$u->save();
+				$oldpass = $user->password;
+				$user->copyfrom('POST');
+				if(empty($user->password)) {
+					$user->setPassword($oldpass);
+				} else {
+					$user->setPassword($user->password);
+				}
+
+				$user->save();
 				\StatusMessage::add('User updated succesfully','success');
 
 				//If it succeeds, reroute to index
 				return $f3->reroute('/admin/user');
-			} else {
-				//If it fails, stay on the same page
-				//(the checking method handles status messages, so we don't have to)
-				return $f3->reroute($f3->get('url'));
 			}
 		}
-		$_POST = $u->cast();
-		$f3->set('u',$u);
+		$_POST = $user->cast();
+		$f3->set('u',$user);
 		$f3->set('formhelper',$this->Form);
 	}
 
