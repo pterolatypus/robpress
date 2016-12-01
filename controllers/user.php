@@ -100,7 +100,11 @@ class User extends Controller {
 		$oldpass = $u->password;
 		if($this->request->is('post')) {
 			$u->copyfrom('POST');
-			if(empty($u->password)) { $u->password = $oldpass; }
+			if(!empty($password)) {
+				$u->setPassword($password);
+			} else {
+				$u->setPassword($oldpass);
+			}
 
 			//Handle avatar upload
 			if(isset($_FILES['avatar']) && isset($_FILES['avatar']['tmp_name']) && !empty($_FILES['avatar']['tmp_name'])) {
